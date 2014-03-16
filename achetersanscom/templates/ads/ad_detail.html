@@ -1,0 +1,156 @@
+{% extends 'base.html' %}
+
+{% load leaflet_tags geojson_tags humanize bootstrap %}
+
+{% block head %}
+{{ block.super }}
+{% leaflet_js %}
+{% leaflet_css %}
+<script type="text/javascript">
+function map_init_basic (map, options) {
+    var json = {{ object.location|geojsonfeature|safe }};
+    var feature = L.geoJson(json)
+    feature.addTo(map);
+    map.fitBounds(feature.getBounds());
+}
+</script>
+{% endblock %}
+
+
+{% block content %}
+
+<h2 class="page-header">Vente {{ object.habitation_type }} {{ object.rooms }} pièces ({{ object.bedrooms }} ch.) {{ object.surface }}m² {{ object.price|intcomma }} €</h2>
+<p class="small">
+    Mise en ligne par <a href="{% url 'user_account' object.user.username %}">{{ object.user }}</a> le {{ object.created|date:"SHORT_DATETIME_FORMAT" }}{#, modifié le {{ object.modified }}#}
+</p>
+
+{% leaflet_map "map" callback="window.map_init_basic"%} <br />
+
+<div class="row">
+
+    <div class="col-md-6">
+
+        <ul class="list-group">
+            <li class="list-group-item">{{ object.price|intcomma }} €</li>
+            <li class="list-group-item">Surface : {{ object.surface }}m² {% if object.surface_carrez %}(loi carrez : {{ object.surface_carrez }}m²){% endif %}</li>
+            <li class="list-group-item">{{ object.rooms }} pièces</li>
+            <li class="list-group-item">{{ object.bedrooms }} chambres</li>
+
+            {% if object.ground_surface %}<li class="list-group-item">Terrain : {{ object.ground_surface }} m²</li>{% endif %}
+            <li class="list-group-item">Taxe foncière : {{ object.ad_valorem_tax }} €/an</li>
+            <li class="list-group-item">Taxe d'habitation : {{ object.housing_tax }} €/an</li>
+            <li class="list-group-item">Charges : {{ object.maintenance_charges }} €/an</li>
+        </ul>
+
+        <ul class="list-group">
+            <li class="list-group-item">Émissions de gaz à effet de serre : {{ object.get_emission_of_greenhouse_gases_display }} kgeqCO2/m².an</li>
+            <li class="list-group-item">Consommation énergétique : {{ object.get_energy_consumption_display }} kWhEP/m².an</li>
+            {% if object.heating %}<li class="list-group-item">Chauffage : {{ object.get_heating_display }} </li>{% endif %}
+            {% if object.fireplace %}<li class="list-group-item">Cheminée : {{ object.get_fireplace_display }}</li>{% endif %}
+        </ul>
+
+        <ul class="list-group">
+            {% if object.floor %}<li class="list-group-item">{{ object.floor }}<sup>e</sup> étage</li>{% endif %}
+            {% if object.ground_floor %}<li class="list-group-item">Rez-de-chaussée</li>{% endif %}
+            {% if object.top_floor %}<li class="list-group-item">Dernier étage</li>{% endif %}
+            {% if object.not_overlooked %}<li class="list-group-item">Sans vis-à-vis</li>{% endif %}
+            {% if object.elevator %}<li class="list-group-item">Ascenceur</li>{% endif %}
+            {% if object.intercom %}<li class="list-group-item">Interphone</li>{% endif %}
+            {% if object.digicode %}<li class="list-group-item">Digicode</li>{% endif %}
+            {% if object.doorman %}<li class="list-group-item">Gardien</li>{% endif %}
+            {% if object.cellar %}<li class="list-group-item">Cave</li>{% endif %}
+            {% if object.parking %}<li class="list-group-item">{{ object.get_parking_display }} </li>{% endif %}
+            {% if object.orientation %}<li class="list-group-item">Orientation : {{ object.orientation }}</li>{% endif %}
+
+        </ul>
+
+        <ul class="list-group">
+            {% if object.kitchen %}<li class="list-group-item">Cuisine équipée</li>{% endif %}
+            {% if object.separate_dining_room %}<li class="list-group-item">Cuisine séparée </li>{% endif %}
+            {% if object.separate_entrance %}<li class="list-group-item">Entrée séparée</li>{% endif %}
+            {% if object.duplex %}<li class="list-group-item">Duplex</li>{% endif %}
+            {% if object.swimming_pool %}<li class="list-group-item">Piscine</li>{% endif %}
+            {% if object.alarm %}<li class="list-group-item">Alarme</li>{% endif %}
+            {% if object.air_conditioning %}<li class="list-group-item">Air climatisé</li>{% endif %}
+            {% if object.terrace %}<li class="list-group-item">Terrace : {{ object.terrace }} m²</li>{% endif %}
+            {% if object.balcony %}<li class="list-group-item">Balcon : {{ object.balcony }} m²</li>{% endif %}
+            {% if object.separate_toilet %}<li class="list-group-item">{{ object.separate_toilet }} toilettes </li>{% endif %}
+            {% if object.bathroom %}<li class="list-group-item">{{ object.bathroom }} salle de bain </li>{% endif %}
+            {% if object.shower %}<li class="list-group-item">{{ object.shower }} salle d'eau (avec douche) </li>{% endif %}
+        </ul>
+
+    </div>
+
+    <div class="col-md-6">
+        {% if object.description %}
+        Description : {{ object.description }}
+        {% endif %}
+
+        {% if object.adpicture_set.all %}
+        {% for picture in object.adpicture_set.all %}
+        <img src="{{ picture.image.url }}" width="100%" /> {{ picture.title }}
+        </br />
+        {% endfor %}
+        {% endif %}
+
+
+
+
+
+
+
+
+    {% if user.is_authenticated %}
+
+    {% if already_contacted %}
+        <div class="alert alert-info">
+        Vous avez déjà contacté ce vendeur.
+    </div>
+
+    {% endif %}
+
+        {% if contact_form %}
+            <form method="POST" action=".">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label>Votre message au vendeur</label>
+                    {{ contact_form.messageRecord }}
+                    {{ contact_form.message.errors }}
+                </div>
+                <input class="btn btn-default btn-block" type="submit" />
+            </form>
+            {% if object.user.userprofile_set.all.0.phone %}
+            <hr />
+            <div>
+
+            <b>N° de téléphone du vendeur : {{ object.user.userprofile_set.all.0.phone }}</b>
+        </div>
+            {% endif %}
+
+        {% else %}
+
+    <div class="alert alert-info">
+        Vous n'avez pas de recherche correspondant à ce bien,
+        <a class="alert-link" href="{% url 'ads_search_add' %}">déposez une recherche.</a>
+    </div>
+
+        {% endif %}
+
+
+
+    {% else %}
+
+    <div class="alert alert-info">
+    Pour contacter les vendeurs, il vous faut avoir un compte et avoir une recherche correpondant à ce bien.
+    <a class="btn btn-default" href="{% url 'ads_search_add' %}">Ajouter une annonce de recherche</a>
+    </div>
+
+
+    {% endif %}
+</div>
+
+
+</div>
+
+
+{% endblock %}

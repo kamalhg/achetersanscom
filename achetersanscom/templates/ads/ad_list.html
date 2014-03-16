@@ -1,0 +1,128 @@
+{% extends 'ads/list.html' %}
+{% load humanize leaflet_tags l10n %}
+
+{% block head %}
+{{ block.super }}
+{% leaflet_js plugins="forms" %}
+{% leaflet_css plugins="forms" %}
+{{ form.media }}
+<style type="text/css">
+#id_location_map {
+    width:100%;
+}
+
+</style>
+{% endblock %}
+
+
+
+{% block content-title %}Acheteurs : Trouvez un bien{% endblock %}
+
+{% block form %}
+<form role="form" method="get" action=".">
+    {{ form.non_field_errors }}
+    <div class="row">
+        <div class="col-md-4">
+            <a class="btn btn-default" id="localize">
+                Centrer la carte sur votre localisation
+            </a>
+        </div>
+        <div class="col-md-4">
+            <div class="input-group">
+                <input class="form-control" id="address" placeholder="ou indiquer une adresse"/>
+                <span class="input-group-btn">
+                    <a id="address_localize" class="btn btn-default">
+                        Centrer
+                    </a>
+                </span>
+            </div>
+        </div>
+        <div class="col-md-8">
+            <div class="form-group">
+                <label class="sr-only">Zone</label>
+                {{ form.location }}
+                {{ form.location.errors }}
+            </div>
+        </div>
+        <div class="col-md-4">
+
+           <div class="form-group">
+            <label class="sr-only">Prix max.</label>
+            <div class="input-group">
+                <span class="input-group-addon">€</span>
+                {{ form.price_max }}
+
+            </div>
+            {{ form.price_max.errors }}
+        </div>
+        <div class="form-group">
+            <label class="sr-only">Surface min.</label>
+            <div class="input-group">
+                <span class="input-group-addon">m<sup>2</sup></span>
+                {{ form.surface_min }}
+
+            </div>
+            {{ form.surface_min.errors }}
+        </div>
+
+        <div class="form-group">
+            <label class="sr-only">Types</label>
+            {{ form.habitation_types }}
+            {{ form.habitation_types.errors }}
+        </div>
+        {% if valid %}
+        <input type="submit" class="btn btn-default" name="save_ad" value="Enregistrer votre annonce">
+        <input type="submit" class="btn btn-default" value="Actualiser">
+        {% else %}
+        <input type="submit" class="btn btn-default" value="Chercher">
+        {% endif %}
+    </div>
+
+
+</div>
+
+
+</form>
+{% endblock %}
+
+
+{% block list_title %}
+<h3>
+    {% if valid %}
+    Résultats de votre recherche
+    {% else %}
+    Les dernières annonces de vente
+    {% endif %}
+</h3>
+{% endblock %}
+
+
+{% block search_result_header %}
+<th></th>
+<th>Type de bien</th>
+<th>Prix</th>
+<th>Surface</th>
+<th>Date</th>
+{% endblock %}
+
+
+{% block search_result %}
+<tr onclick="document.location='{{ object.get_absolute_url }}';">
+<td>
+    <a class="show-marker btn btn-default btn-xs" data-lng="{{ object.location.y|unlocalize }}" data-lat="{{ object.location.x|unlocalize }}" data-href="{{ object.get_absolute_url }}">Localiser</a>
+</td>
+<td>
+    <a href="{{ object.get_absolute_url }}">{{ object.habitation_type }}</a>
+</td>
+<td>
+    {{ object.price|intcomma }} €
+</td>
+<td>
+    {{ object.surface }} m<sup>2</sup>
+</td>
+</td>
+<td>
+    {{ object.modified|naturaltime }}
+</td>
+</tr>
+{% endblock %}

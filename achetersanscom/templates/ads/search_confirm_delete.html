@@ -1,0 +1,17 @@
+{% extends 'base_single_element.html' %}
+
+
+{% block panel-title %}
+Suppression d'une annonce de recherche
+{% endblock %}
+
+{% block panel-body %}
+<form action="." method="post">{% csrf_token %}
+    <p>Voulez-vous supprimer votre annonce de recherche :
+    <br />
+    <b>{{ object }}</b> ?
+    </p>
+    <input class="btn btn-danger" type="submit" value="Oui" />
+    <a class="btn btn-default" href="javascript:history.back()">Non</a>
+</form>
+{% endblock %}

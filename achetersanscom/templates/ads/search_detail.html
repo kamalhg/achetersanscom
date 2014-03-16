@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+
+{% load leaflet_tags geojson_tags humanize bootstrap %}
+
+
+{% block head %}
+{{ block.super }}
+{% leaflet_js %}
+{% leaflet_css %}
+<script type="text/javascript">
+function map_init_basic (map, options) {
+    var json = {{ object.location|geojsonfeature|safe }};
+    var feature = L.geoJson(json)
+    feature.addTo(map);
+    map.fitBounds(feature.getBounds());
+}
+</script>
+{% endblock %}
+
+{% block content %}
+
+<h2 class="page-header">Recherche {{ object.habitation_types.all|join:', ' }} {{ object.surface_min }}m² min. {{ object.price_max|intcomma }} € max.</h2>
+<p  class="small">
+        Mise en ligne par <a href="{% url 'user_account' object.user.username %}">{{ object.user }}</a> le {{ object.created|date:"SHORT_DATE_FORMAT" }} à {{ object.created|time:'H:i' }}{#, modifié le {{ object.modified|date:"SHORT_DATE_FORMAT" }} à {{ object.modified|time:"H:i" }}#}
+</p>
+{% leaflet_map "map" callback="window.map_init_basic"%}<br />
+
+<div class="row">
+
+    <div class="col-md-6">
+        {{ object.description }} <br />
+    </div>
+    <div class="col-md-6">
+
+
+        {% if user.is_authenticated %}
+
+        {% if already_contacted %}
+
+        <div class="alert alert-info">
+            Vous avez déjà contacté cet acheteur.
+        </div>
+
+        {% endif %}
+
+        {% if contact_form %}
+
+        <form method="POST" action=".">
+            {% csrf_token %}
+
+            <div class="form-group">
+                <label>Votre message à l'acheteur</label>
+                {{ contact_form.messageRecord }}
+                {{ contact_form.message.errors }}
+            </div>
+
+            <input class="btn btn-default btn-block" type="submit" />
+        </form>
+        {% if object.user.userprofile_set.all.0.phone %}
+        <hr />
+            <div>
+
+            <b>N° de téléphone de l'acheteur : {{ object.user.userprofile_set.all.0.phone }}</b>
+        </div>
+        {% endif %}
+
+        {% else %}
+
+        Vous n'avez pas de bien correspondant à cette recherche.
+
+        {% endif %}
+
+
+
+
+        {% else %}
+
+        Pour contacter les chercheurs, il vous faut avoir un compte et avoir un bien en vente correpondant à leur recherche.
+        <a class="btn btn-default" href="{% url 'ads_ad_add' %}">Ajouter une annonce de bien à vendre</a>
+        {% endif %}
+
+
+
+    </div>
+</div>
+
+
+{% endblock %}

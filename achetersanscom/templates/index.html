@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h3 class="panel-title">Vendeurs</h3>
+        </div>
+        <div class="panel-body">
+            <a class="btn btn-default" href="{% url 'ads_search_list' %}">Trouvez des acheteurs intéressés par votre bien</a>
+        </div>
+    </div>
+</div>
+<div class="col-md-6">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title">Acheteurs</h3>
+    </div>
+    <div class="panel-body">
+        <a class="btn btn-default"  href="{% url 'ads_ad_list' %}">Trouvez un bien correpondant à votre recherche</a>
+    </div>
+</div>
+</div>
+</div>
+{% endblock %}

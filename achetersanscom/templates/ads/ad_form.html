@@ -1,0 +1,321 @@
+{% extends 'ads/form.html' %}
+{% load staticfiles thumbnails %}
+
+{% block head %}
+{{ block.super }}
+{{ form.media }}
+{% endblock %}
+
+{% block content %}
+
+<div class="row">
+    <div class="col-md-8 col-md-offset-2">
+        <h2>Vendeur : Votre annonce de bien à vendre</h2>
+
+        <div class="alert alert-info">
+        Nous vous conseillons de renseigner le maximum de champs, d'être exhaustif dans votre description et de fournir un plan de votre bien et plusieurs photos. En effet, les acheteurs sont plus attirés par les biens pour lesquels la description est complète et seront mieux à même de cibler les biens susceptibles de vraiment correspondre à leurs besoins. Les acheteurs qui vous contacteront seront ainsi les plus susceptibles d'être vraiment intéressés par votre bien, cela vous évitera de nombreux appels passés à titre informatifs ou des visites superflues qui auront peu de chance d'aboutir.
+        </div>
+
+        <form method="POST" action="." role="form" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            {% if form.non_field_errors %}
+            <div class="alert alert-danger">
+            {{ form.non_field_errors }}
+            </div>
+            {% endif %}
+
+            <h4 class="page-header">Informations générales</h4>
+
+            <div class="form-group">
+                <label>{{ form.habitation_type.label }}</label>
+                {{ form.habitation_type }}
+                {{ form.habitation_type.errors }}
+            </div>
+
+            <div class="form-group">
+                <label>{{ form.address.label }}</label>
+                {{ form.address }}
+                {{ form.address.errors }}
+            </div>
+
+            <div class="form-group">
+                <label>{{ form.price.label }}</label>
+                <div class="input-group">
+                    <span class="input-group-addon">€</span>
+                    {{ form.price }}
+                </div>
+                {{ form.price.errors }}
+            </div>
+
+            <div class="form-group">
+                <label>{{ form.surface.label }}</label>
+                <div class="input-group">
+                    <span class="input-group-addon">m<sup>2</sup></span>
+                    {{ form.surface }}
+                </div>
+                {{ form.surface.errors }}
+            </div>
+
+            <div class="form-group">
+                <label>{{ form.surface_carrez.label }} </label>
+                <div class="input-group">
+                    <span class="input-group-addon">m<sup>2</sup></span>
+                    {{ form.surface_carrez }}
+                </div>
+                {{ form.surface_carrez.errors }}
+            </div>
+
+            <div class="form-group">
+                <label>{{ form.rooms.label }} </label>
+                {{ form.rooms }}
+                {{ form.rooms.errors }}
+            </div>
+
+            <div class="form-group">
+                <label>{{ form.bedrooms.label }}</label>
+                {{ form.bedrooms }}
+                {{ form.bedrooms.errors }}
+            </div>
+
+            <div class="form-group">
+                <label>{{ form.ad_valorem_tax.label }}</label>
+                <div class="input-group">
+                    <span class="input-group-addon">€/an</span>
+                    {{ form.ad_valorem_tax }}
+                </div>
+                {{ form.ad_valorem_tax.errors }}
+            </div>
+
+            <div class="form-group">
+                <label>{{ form.housing_tax.label }}</label>
+                <div class="input-group">
+                    <span class="input-group-addon">€/an</span>
+                    {{ form.housing_tax }}
+                </div>
+                {{ form.housing_tax.errors }}
+            </div>
+
+            <div class="form-group">
+                <label>{{ form.maintenance_charges.label }}</label>
+                <div class="input-group">
+                    <span class="input-group-addon">€/mois</span>
+                    {{ form.maintenance_charges }}
+                </div>
+                {{ form.maintenance_charges.errors }}
+            </div>
+
+
+            <div class="form-group">
+                <label>{{ form.energy_consumption.label }}</label>
+                {{ form.energy_consumption }}
+                {{ form.energy_consumption.errors }}
+            </div>
+
+            <div class="form-group">
+                <label>{{ form.emission_of_greenhouse_gases.label }}</label>
+                {{ form.emission_of_greenhouse_gases }} {{ form.emission_of_greenhouse_gases.errors }}
+            </div>
+
+
+
+            <div class="form-group">
+                <label>{{ form.ground_surface.label }}</label>
+                <div class="input-group">
+                    <span class="input-group-addon">m<sup>2</sup></span>
+                    {{ form.ground_surface }}
+                </div>
+                {{ form.ground_surface.errors }}
+            </div>
+
+
+            <h4 class="page-header">Situation du logement dans l'immeuble</h4>
+
+            <div class="form-group">
+                <label>{{ form.floor.label }}</label>
+                {{ form.floor }} {{ form.floor.errors }}
+            </div>
+
+            <div class="checkbox">
+                <label>{{ form.ground_floor }} {{ form.ground_floor.label }}</label>
+                {{ form.ground_floor.errors }}
+            </div>
+            <div class="checkbox">
+                <label>{{ form.top_floor }} {{ form.top_floor.label }}</label>
+                {{ form.top_floor.errors }}
+            </div>
+
+            <div class="checkbox">
+                <label>{{ form.duplex }} {{ form.duplex.label }}</label>
+                {{ form.duplex.errors }}
+            </div>
+
+            <div class="checkbox">
+                <label>{{ form.not_overlooked }} {{ form.not_overlooked.label }}</label>
+                {{ form.not_overlooked.errors }}
+            </div>
+
+            <div class="form-group">
+                <label>{{ form.orientation.label }}</label>
+                {{ form.orientation }} {{ form.orientation.errors }}
+            </div>
+
+            <h4 class="page-header">A propos de l'immeuble</h4>
+
+            <div class="checkbox">
+                <label>{{ form.elevator }} {{ form.elevator.label }}</label>
+                {{ form.elevator.errors }}
+            </div>
+            <div class="checkbox">
+                <label>{{ form.intercom }} {{ form.intercom.label }}</label>
+                {{ form.intercom.errors }}
+            </div>
+            <div class="checkbox">
+                <label>{{ form.digicode }} {{ form.digicode.label }}</label>
+                {{ form.digicode.errors }}
+            </div>
+            <div class="checkbox">
+                <label>{{ form.doorman }} {{ form.doorman.label }}</label>
+                {{ form.doorman.errors }}
+            </div>
+
+            <h4 class="page-header">Commodités</h4>
+
+            <div class="form-group">
+                <label>{{ form.heating.label }}</label>
+                {{ form.heating }} {{ form.heating.errors }}
+            </div>
+
+            <div class="checkbox">
+                <label>{{ form.kitchen }} {{ form.kitchen.label }}</label>
+                {{ form.kitchen.errors }}
+            </div>
+
+            <div class="checkbox">
+                <label>{{ form.cellar }} {{ form.cellar.label }}</label>
+                {{ form.cellar.errors }}
+            </div>
+
+            <div class="form-group">
+                <label>{{ form.parking.label }}</label>
+                {{ form.parking }} {{ form.parking.errors }}
+            </div>
+
+            <div class="checkbox">
+                <label>{{ form.alarm }} {{ form.alarm.label }}</label>
+                {{ form.alarm.errors }}
+            </div>
+
+            <div class="form-group">
+                <label>{{ form.balcony.label }}</label>
+                <div class="input-group">
+                    <span class="input-group-addon">Surface (m<sup>2</sup>)</span>
+                    {{ form.balcony }}
+                </div>{{ form.balcony.errors }}
+            </div>
+
+            <div class="form-group">
+                <label>{{ form.terrace.label }}</label>
+                <div class="input-group">
+                    <span class="input-group-addon">Surface (m<sup>2</sup>)</span>
+                    {{ form.terrace }}
+                </div>{{ form.terrace.errors }}
+            </div>
+
+            <div class="form-group">
+                <label>{{ form.fireplace.label }}</label>
+                {{ form.fireplace }} {{ form.fireplace.errors }}
+            </div>
+
+            <div class="checkbox">
+                <label>{{ form.air_conditioning }} {{ form.air_conditioning.label }}</label>
+                {{ form.air_conditioning.errors }}
+            </div>
+
+            <div class="checkbox">
+                <label>{{ form.swimming_pool }} {{ form.swimming_pool.label }}</label>
+                {{ form.swimming_pool.errors }}
+            </div>
+
+
+            <h4 class="page-header">Pièces</h4>
+
+            <div class="checkbox">
+                <label>{{ form.separate_dining_room }} {{ form.separate_dining_room.label }}</label>
+                {{ form.separate_dining_room.errors }}
+            </div>
+            <div class="form-group">
+                <label>{{ form.separate_toilet.label }}</label>
+                {{ form.separate_toilet }} {{ form.separate_toilet.errors }}
+            </div>
+            <div class="form-group">
+                <label>{{ form.bathroom.label }}</label>
+                {{ form.bathroom }} {{ form.bathroom.errors }}
+            </div>
+            <div class="form-group">
+                <label>{{ form.shower.label }}</label>
+                {{ form.shower }} {{ form.shower.errors }}
+            </div>
+            <div class="checkbox">
+                <label>{{ form.separate_entrance }} {{ form.separate_entrance.label }}</label>
+                {{ form.separate_entrance.errors }}
+            </div>
+
+
+            <h4 class="page-header">Photos</h4>
+
+            <div class="alert alert-info">N'hésitez pas à insérer une photo du plan de votre bien.</div>
+
+
+            {% for formset in inlines %}
+            <ul class="media-list">
+                {{ formset.management_form }}
+                {% for form in formset %}
+                <li class="media">
+                    <span class="pull-left">
+                        {% if form.image.value.url %}
+                        <img src="{% thumbnail form.image.value 190 180 %}" class="img-responsive"/>
+                        {% else %}
+                        <img src="{% static 'img/no-image.png' %}" class="img-responsive" width="190px;"/>
+                        {% endif %}
+                    </span>
+                    <div class="media-body">
+                        <h4 class="media-heading">Photo n°{{ forloop.counter }}</h4>
+                        <div class="form-group">
+                            {% for hidden in form.hidden_fields %}
+                            {{ hidden }}
+                            {% endfor %}
+                            <label class="sr-only">{{ form.image.label }}</label>
+                            {{ form.image }}
+                            {{ form.image.errors }}
+                        </div>
+                        <div class="form-group">
+                            <label>{{ form.title.label }}</label>
+                            {{ form.title }}
+                            {{ form.title.errors }}
+                        </div>
+                        <div class="checkbox">
+                            <label>{{ form.DELETE }} {{ form.DELETE.label }}</label>
+                        </div>
+                    </div>
+                </li>
+                <hr />
+                {% endfor %}
+            </ul>
+            {% endfor %}
+
+            <h4 class="page-header">Informations complémentaires</h4>
+
+            <div class="form-group">
+                <label class="sr-only">{{ form.description.label }}</label>
+                {{ form.description }} {{ form.description.errors }}
+            </div>
+
+            {{ block.super }}
+            <hr />
+
+            <input type="submit" class="btn btn-primary btn-block" value="Enregistrer votre annonce" />
+        </form>
+    </div>
+</div>
+{% endblock %}

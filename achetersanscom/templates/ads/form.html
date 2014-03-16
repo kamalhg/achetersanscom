@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+{% load staticfiles thumbnails %}
+
+{% block head %}
+{{ block.super }}
+{{ form.media }}
+{% endblock %}
+
+{% block content %}
+
+{% if user.is_authenticated %}
+
+{% else %}
+<hr />
+
+<div style="display:none">
+{{ form.login }}
+</div>
+
+<ul id="login_tab" class="nav nav-tabs">
+  <li class="active" >
+    <a href="#signup" id="sign" data-toggle="tab">Créer un compte</a>
+</li>
+<li >
+    <a href="#login" id="log" data-toggle="tab">Utiliser un compte existant</a>
+</li>
+</ul>
+
+<div class="tab-content">
+  <div class="tab-pane active" id="signup">
+    <div class="form-group">
+        <label>Nom d'utilisateur</label>
+        {{ form.username }}
+        {{ form.username.errors }}
+    </div>
+    <div class="form-group">
+        <label>Email</label>
+        {{ form.email }}
+        {{ form.email.errors }}
+    </div>
+    <div class="form-group">
+        <label>Mot de passe</label>
+        {{ form.password }}
+        {{ form.password.errors }}
+    </div>
+    <div class="form-group">
+        <label>Mot de passe (à nouveau)</label>
+        {{ form.password2 }}
+        {{ form.password2.errors }}
+    </div>
+</div>
+<div class="tab-pane" id="login">
+    <div class="form-group">
+        <label>Nom d'utilisateur</label>
+        {{ form.login_username }}
+        {{ form.login_username.errors }}
+    </div>
+    <div class="form-group">
+        <label>Mot de passe</label>
+        {{ form.login_password }}
+        {{ form.login_password.errors }}
+    </div>
+</div>
+</div>
+
+<script type="text/javascript">
+
+$(function() {
+
+    $('#login_tab a').click(function (e) {
+      e.preventDefault();
+      $(this).tab('show');
+      if($(this).attr('id') === "log"){
+        $('#id_login').prop('checked', true);
+    }else{
+        $('#id_login').prop('checked', false);
+    }
+
+});
+    if('{{ form.login.value }}' === 'True'){
+        $('#log').tab('show');
+    }
+})
+</script>
+
+
+{% endif %}
+
+{% endblock %}

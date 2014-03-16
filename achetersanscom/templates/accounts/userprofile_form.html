@@ -1,0 +1,30 @@
+{% extends "base_single_element.html" %}
+{% load bootstrap %}
+
+{% block panel-title %}
+Modifier le profil
+{% endblock %}
+
+{% block panel-body %}
+{% if form.errors %}
+{{ form.errors }}
+{% endif %}
+
+<form method="post" action=".">
+    {% csrf_token %}
+
+
+    <div class="form-group">
+        <label>
+            {{ form.phone.label }}
+        </label>
+        {{ form.phone }}
+        {{ form.phone.errors }}
+    </div>
+
+    <input type="submit" value="Valider" class="btn btn-default btn-block">
+
+
+</form>
+{% endblock %}
+

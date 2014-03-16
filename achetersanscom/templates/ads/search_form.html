@@ -1,0 +1,90 @@
+{% extends 'ads/form.html' %}
+
+{% load leaflet_tags %}
+
+{% block head %}
+{{ block.super }}
+{{ form.media }}
+{% leaflet_js plugins="forms" %}
+{% leaflet_css plugins="forms" %}
+
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8 col-md-offset-2">
+        <h2>Acheteurs : Trouvez un bien à acheter</h2>
+        <form method="POST" action=".">
+            {% csrf_token %}
+
+            {% if form.non_field_errors %}
+            <div class="alert alert-danger">
+            {{ form.non_field_errors }}
+            </div>
+            {% endif %}
+
+            <div class="row">
+                <div class="col-md-6">
+                    <a class="btn btn-default" id="localize">
+                        Centrer la carte sur votre localisation
+                    </a>
+                </div>
+                <div class="col-md-6">
+                    <div class="input-group">
+                        <input class="form-control" id="address" placeholder="ou indiquer une adresse"/>
+                        <span class="input-group-btn">
+                            <a id="address_localize" class="btn btn-default">
+                                Centrer
+                            </a>
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="sr-only">Zone de recherche</label>
+                {{ form.location }}
+                {{ form.location.errors }}
+            </div>
+
+            <div class="form-group">
+                <label>Prix maximum</label>
+                <div class="input-group">
+                    <span class="input-group-addon">€</span>
+                    {{ form.price_max }}
+
+                </div>
+                {{ form.price_max.errors }}
+            </div>
+
+            <div class="form-group">
+                <label>Surface minimum</label>
+                <div class="input-group">
+                    <span class="input-group-addon">m<sup>2</sup></span>
+                    {{ form.surface_min }}
+
+                </div>
+                {{ form.surface_min.errors }}
+            </div>
+
+            <div class="form-group">
+                <label>Types de bien</label>
+                {{ form.habitation_types }}
+                {{ form.habitation_types.errors }}
+            </div>
+
+            <div class="form-group">
+                <label>Description</label>
+                {{ form.description }}
+                {{ form.description.errors }}
+            </div>
+
+            {{ block.super }}
+            <hr />
+
+            <input type="submit" class="btn btn-primary btn-block" value="Enregistrer votre recherche"/>
+
+        </form>
+    </div>
+</div>
+{% endblock %}

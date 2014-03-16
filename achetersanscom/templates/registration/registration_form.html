@@ -1,0 +1,43 @@
+{% extends 'base_single_element.html' %}
+{% load bootstrap %}
+
+{% block panel-title %}
+Créer un compte
+{% endblock %}
+
+{% block panel-body %}
+
+<form method="POST" action="{% url 'registration_register' %}">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label>
+                        {{ form.username.label }}
+                    </label>
+                    {{ form.username }}
+                    {{ form.username.errors }}
+                </div>
+                <div class="form-group">
+                    <label>
+                        {{ form.email.label }}
+                    </label>
+                    {{ form.email }}
+                    {{ form.email.errors }}
+                </div>
+                <div class="form-group">
+                    <label>
+                        {{ form.password1.label }}
+                    </label>
+                    {{ form.password1 }}
+                    {{ form.password1.errors }}
+                </div>
+                <div class="form-group">
+                    <label>
+                        {{ form.password2.label }}
+                    </label>
+                    {{ form.password2 }}
+                    {{ form.password2.errors }}
+                </div>
+                <input type="submit" value="Créer votre compte" class="btn btn-default btn-block">
+            </form>
+
+{% endblock %}

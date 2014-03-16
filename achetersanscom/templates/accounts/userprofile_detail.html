@@ -1,0 +1,159 @@
+{% extends "base.html" %}
+{% load contacted %}
+
+{% block content %}
+
+{% if user == object.user %}
+
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h3 class="panel-title">Votre compte : {{ object }}</h3>
+</div>
+<div class="panel-body">
+    Téléphone : {{object.phone }}
+    <br />
+    <a class="btn btn-default" href="{% url 'user_account_update' object.user.username %}">Modifier vos informations personnelles</a>
+
+    <a class="btn btn-default" href="{% url 'password_change' %}">Changer de mot de passe</a>
+
+</div>
+</div>
+
+{% else %}
+
+<h2>Profil de {{ object }}</h2>
+
+{% endif %}
+
+{% if user == object.user %}
+
+<h3>Vos annonces de bien à vendre</h3>
+{% if ads %}
+
+{% for ad in ads %}
+<div class="panel panel-default">
+    <div class="panel-heading"><a href="{% url 'ads_ad_detail' ad.slug %}">{{ ad }}</a>
+    </div>
+    <div class="panel-body">
+        <a class="btn btn-default" href="{% url 'ads_ad_update' ad.slug %}">Modifier</a>
+        <a class="btn btn-default" href="{% url 'ads_ad_delete' ad.slug %}">Supprimer</a>
+    </div>
+    <table class="table">
+        {% for asr in ad.adsearchrelation_set.all %}
+        {% if asr.valid %}
+        <tr><td><a href="{% url 'ads_search_detail' asr.search.slug %}">{{ asr.search }}</a>
+        </td>
+            <td>
+
+                {% if asr.search_contacted %}
+                Vous avez déjà contacté l'acheteur
+                {% else %}
+                    {% if ad.user|contacted:asr.search %}
+                    Vous avez été contacté par l'acheteur
+                    {% else %}
+                    <a href="{% url 'ads_search_detail' asr.search.slug %}">Contactez l'acheteur
+                    </a>
+                    {% endif %}
+                {% endif %}
+
+                {% comment %}
+                {% if ad.user|contacted:asr.search %}
+                {% if asr.ad_contacted %}
+                L'acheteur <a href="{% url 'user_account' asr.search.user.username %}">{{ asr.search.user.username }}</a> vous a contacté
+                {% else %}
+                L'acheteur <a href="{% url 'user_account' asr.search.user.username %}">{{ asr.search.user.username }}</a> ne vous a pas contacté
+                {% endif %}
+                {% endcomment %}
+            </td>
+    </tr>
+        {% endif %}
+        {% endfor %}
+    </table>
+</div>
+{% endfor %}
+{% endif %}
+<div>
+<a class="btn btn-default" href="{% url 'ads_ad_add' %}">Ajouter une annonce de bien à vendre</a>
+</div>
+
+
+<h3>Vos annonces de recherche</h3>
+{% if searches %}
+
+{% for search in searches %}
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <a href="{% url 'ads_search_detail' search.slug %}">{{ search }}</a>
+    </div>
+    <div class="panel-body">
+        <a class="btn btn-default" href="{% url 'ads_search_update' search.slug %}">Modifier</a>
+        <a class="btn btn-default" href="{% url 'ads_search_delete' search.slug %}">Supprimer</a>
+    </div>
+    <table class="table">
+        {% for asr in search.adsearchrelation_set.all %}
+        {% if asr.valid %}
+        <tr>
+            <td>
+                <a href="{% url 'ads_ad_detail' asr.ad.slug %}">{{ asr.ad }}</a>
+            </td>
+            <td>
+
+
+                {% if search.user|contacted:asr.ad %}
+                Vous avez déjà contacté le vendeur
+                {% else %}
+                    {% if asr.search_contacted %}
+                    Vous avez été contacté par le vendeur
+                    {% else %}
+                    <a href="{% url 'ads_ad_detail' asr.ad.slug %}">
+                        Contactez le vendeur
+                    </a>
+                    {% endif %}
+                {% endif %}
+
+                {% comment %}
+                {% if search.user|contacted:asr.ad %}
+                {#{% if asr.ad_contacted %}#}
+                Vous avez déjà contacté le vendeur <a href="{% url 'user_account' asr.ad.user.username %}">{{ asr.ad.user.username }}</a> pour ce bien.
+                {% else %}
+                Vous n'avez pas encore contacté le vendeur <a href="{% url 'user_account' asr.ad.user.username %}">{{ asr.ad.user.username }}</a> pour ce bien.
+                {% endif %}
+                {% endcomment %}
+            </td>
+        </tr>
+        {% endif %}
+        {% endfor %}
+    </table>
+</div>
+{% endfor %}
+{% endif %}
+<div>
+<a class="btn btn-default" href="{% url 'ads_search_add' %}">Ajouter une annonce de recherche</a>
+</div>
+
+{% else %}
+
+{% if ads %}
+
+<h3>Ses annonces</h3>
+<ul>
+{% for ad in ads %}
+    <li><a href="{% url 'ads_ad_detail' ad.slug %}">{{ ad }}</a></li>
+{% endfor %}
+</ul>
+
+{% endif %}
+
+{% if searches %}
+
+<h3>Ses recherches</h3>
+<ul>
+{% for search in searches %}
+    <li><a href="{% url 'ads_search_detail' search.slug %}">{{ search }}</a></li>
+{% endfor %}
+</ul>
+{% endif %}
+
+{% endif %}
+
+{% endblock %}
